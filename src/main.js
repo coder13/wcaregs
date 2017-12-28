@@ -3,7 +3,8 @@
 import Vue from 'vue'
 import Buefy from 'buefy'
 import App from './App'
-import 'buefy/lib/buefy.css'
+
+import './theme.scss'
 
 Vue.use(Buefy)
 

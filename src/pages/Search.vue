@@ -4,7 +4,7 @@
     <ul>
       <li v-for="(regulation,index) in (this.$route.query.q ? regulationsToShow : regulations)" :key="index">
         <span class="anchor" :id="regulation.item.id"/>
-        <a :href="'/#' + regulation.item.id">{{regulation.item.id}}</a>) <span v-if="regulation.item.label" class="tag">{{regulation.item.label}}</span> <span v-html="regulation.highlight || regulation.item.description"/>
+        <router-link :to="'/#' + regulation.item.id">{{regulation.item.id}}</router-link>) <span v-if="regulation.item.label" class="tag">{{regulation.item.label}}</span> <span v-html="regulation.highlight || regulation.item.description"/>
       </li>
     </ul>
   </div>

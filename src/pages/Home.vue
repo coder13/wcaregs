@@ -3,14 +3,12 @@
   <div class="container">
     <h5 class="title is-5">Labels: </h5>
 
-    <table class="table" style="width: 100%">
+    <table class="table" style="width: 100%;">
       <tr v-for="(label,index) in regulations.labels" :key="index">
         <td>{{label.type}}</td><td>{{label.description}}</td>
       </tr>
     </table>
-  </div>
 
-  <div class="container">
     <div class="article" v-for="(article,index) in regulations.articles" :key="index">
       <span class="anchor" :id="article.id"/>
       <span class="anchor" :id="article.name2"/>
@@ -21,13 +19,13 @@
 
       <ul>
         <div v-for="(regulation,regIndex) in article.regulations" :key="regIndex" :class="'indent-' + regulation.level">
-          <li v-if="regulation.description">
+          <li v-if="regulation.description" :id="regulation.id">
             <span class="anchor" :id="regulation.id"/>
-            <a class="anchor" :href="regulation.id | link">{{regulation.id}}</a>) {{regulation.description}}</span>
+            <div><a class="anchor" :href="regulation.id | link">{{regulation.id}}</a>) {{regulation.description}}</div>
           </li>
-          <li v-for="(guideline,regIndex) in regulation.guidelines" :key="regIndex">
+          <li v-for="(guideline,regIndex) in regulation.guidelines" :key="regIndex" :id="regulation.id + guideline.pluses">
             <span class="anchor" :id="regulation.id + guideline.pluses"/>
-            <a :href="(guideline.id + guideline.pluses) | link">{{guideline.id + guideline.pluses}}</a>) <span class="tag">{{guideline.label}}</span> {{guideline.description}}</span>
+            <div><a :href="(guideline.id + guideline.pluses) | link">{{guideline.id + guideline.pluses}}</a>) <span class="tag">{{guideline.label}}</span> {{guideline.description}}</div>
           </li>
         </div>
       </ul>
@@ -46,6 +44,3 @@ export default {
   }
 }
 </script>
-
-<style>
-</style>

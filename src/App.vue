@@ -96,11 +96,11 @@ span.anchor{
   visibility: hidden;
 }
 
-:target {
+:target > div {
   background-color: yellow;
 }
 
-:target > .tag {
-  background-color: yellow;
+:target > div > .tag {
+  background-color: rgb(240, 240, 0);
 }
 </style>

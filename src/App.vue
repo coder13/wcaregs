@@ -9,7 +9,7 @@
       </div>
       <div class="navbar-item stretch">
         <div class="control stretch">
-          <input class="input" v-model="query" @update="updateRoute" @keyup="keyUpSearch" type="text"/>
+          <input class="input" v-model="query" @keyup.13="updateRoute" type="text"/>
         </div>
       </div>
     </nav>
@@ -29,12 +29,6 @@ export default {
     }
   },
   methods: {
-    keyUpSearch (e) {
-      if (e.keyCode === 13) {
-        this.updateRoute()
-      }
-    },
-
     updateRoute () {
       if (this.query) {
         this.$router.push({ name: 'search', query: { q: this.query } })

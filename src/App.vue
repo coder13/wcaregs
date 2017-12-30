@@ -2,8 +2,9 @@
   <div id="app" @keyDown style="padding-top: 4rem">
     <nav class="navbar is-fixed-top is-inline-flex-touch" role="navigation">
       <div class="navbar-brand is-hidden-mobile">
-        <router-link class="navbar-item" to="/">
-          <h1>WCA-Regs</h1>
+        <router-link class="navbar-item" style="display: block; line-height: 1em" to="/">
+          <h1 style="margin: 0px">WCA-Regs</h1>
+          <span style="font-size: .65em;">Version: {{this.$root.$data.regulations.version}}</span>
         </router-link>
       </div>
       <div class="navbar-item stretch">

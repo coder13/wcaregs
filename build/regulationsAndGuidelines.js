@@ -9,11 +9,13 @@ const markdownIt = require('markdown-it')({
 });
 
 const regexes = {
-  article: /article\-([0-9A-Z])/,
+  article: /article\-(\w+)/,
   label: /\[(\w+)\]\s(.+)/,
   guideline: /(\w+)(\++)\)\s\[(\w+)\]\s(.+)/,
   regulation: /(\w+)\)\s(.+)/,
 }
+
+const getArticle = (regulationId) => regulationId.match(/(1[012]|[1-9]|[A-Z])\w+/) ? regulationId.match(/(1[012]|[1-9]|[A-Z])\w+/)[1] : null
 
 function parseDescription(description, inlineToken) {
   inlineToken.children.slice(1).forEach(child => {
@@ -27,6 +29,10 @@ function parseDescription(description, inlineToken) {
   return description;
 }
 
+function findArticle(articles, article) {
+  return articles.find(a => a.id.slice(0, article.length) === article);
+}
+
 let rules = {
   heading (state, token, level) {
     let inline = token.children[0];
@@ -38,7 +44,7 @@ let rules = {
     let article = regexes.article.exec(trimmed[0]);
 
     // looking at an article and hasn't been added yet
-    if (article && !state.articles.find(a => a.id === article[1])) {
+    if (article && !findArticle(state.articles, article[1])) {
       state.articles.push({
         id: article[1],
         name: trimmed[1],
@@ -69,7 +75,8 @@ let rules = {
       let textToken = inline.children[0];
       let guideline = regexes.guideline.exec(textToken.content);
       if (guideline !== null) {
-        let article = state.articles.find(a => a.id === guideline[1][0]);
+        let article = findArticle(state.articles, getArticle(guideline[1]));
+        console.log(guideline[1], !!findArticle(state.articles, getArticle(guideline[1]), JSON.stringify(state.articles.map(i => i.id))))
         let regulation = article.regulations.find(r => r.id === guideline[1]);
         if (regulation) { // Not all guidelines attach to regulations
           regulation.guidelines.push({
@@ -94,7 +101,7 @@ let rules = {
         }
       } else { // looks like it's a regulation
         let regulation = regexes.regulation.exec(textToken.content);
-        let article = state.articles.find(a => a.id === regulation[1][0]);
+        let article = findArticle(state.articles, getArticle(regulation[1]));
         if (article) {
           article.regulations.push({
             id: regulation[1],

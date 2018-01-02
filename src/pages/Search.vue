@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import {flatten} from 'lodash'
+import flatten from 'lodash.flatten'
 import {compare as almphanumbericCompare} from 'alphanumeric-sort'
 import Fuse from 'fuse.js'
 

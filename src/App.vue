@@ -14,7 +14,9 @@
       </div>
     </nav>
 
-    <router-view/>
+    <keep-alive include="Main" exclude="Search">
+      <router-view/>
+    </keep-alive>
   </div>
 </template>
 

@@ -17,14 +17,18 @@ import {compare as almphanumbericCompare} from 'alphanumeric-sort'
 import Fuse from 'fuse.js'
 
 const options = {
-  threshold: 0.5,
+  threshold: 0.20,
   includeMatches: true,
+  distance: 1000,
+  includeScore: true,
+  minMatchCharLength: 1,
+  findAllMatches: true,
   keys: [{
     name: 'id',
     weight: 0.25
   }, {
     name: 'description',
-    weight: 0.75
+    weight: 1
   }]
 }
 
@@ -37,7 +41,7 @@ const highlight = function (resultItem) {
     }
 
     let result = []
-    let matches = [].concat(matchItem.indices).filter(i => (i[1] - i[0]) > 2)
+    let matches = [].concat(matchItem.indices).filter(i => (i[1] - i[0]) > 3)
     let pair = matches.shift()
 
     for (let i = 0; i < text.length; i++) {
@@ -64,6 +68,8 @@ const highlight = function (resultItem) {
   })
 }
 
+// const joinDesc = c => c ? c.map(i => i.content).join('') : ''
+
 export default {
   name: 'Search',
   props: ['q'],
@@ -71,9 +77,19 @@ export default {
     let regs = flatten(this.$root.$data.regulations.articles.map(a => {
       let article = { type: 'regulation', id: a.id, name: a.name, name2: a.name2, description: a.description }
 
-      return flatten(a.regulations.map(r =>
-        [{article, id: r.id, level: r.level, description: r.description}]
-          .concat(r.guidelines.map(g => ({article, type: 'guideline', label: g.label, id: g.id + g.pluses, level: g.level, description: g.description})))
+      return flatten(a.regulations.map(r => [{
+        article,
+        id: r.id,
+        level: r.level,
+        description: r.description ? r.description.map(i => i.content).join('') : ''
+      }].concat(r.guidelines.map(g => ({
+        article,
+        type: 'guideline',
+        label: g.label,
+        id: g.id + g.pluses,
+        level: g.level,
+        description: g.description ? g.description.map(i => i.content).join('') : ''
+      })))
       ))
     }))
 
@@ -86,11 +102,11 @@ export default {
       let fuse = new Fuse(this.regulations, options)
 
       let results = fuse.search(this.$route.query.q).map(i => highlight(i)[0])
-      if (this.$route.query.sort) {
-        results = results.sort((a, b) => {
-          return almphanumbericCompare(a.item.id, b.item.id)
-        })
-      }
+      results = results.sort((a, b) => {
+        return almphanumbericCompare(a.item.id, b.item.id)
+      })
+
+      console.log(results)
 
       return results
     }

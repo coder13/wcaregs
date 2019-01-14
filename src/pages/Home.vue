@@ -1,13 +1,21 @@
 <template>
-<div>
+<div id="home">
   <div class="container">
-    <h5 class="title is-5">Labels: </h5>
-
     <table class="table" style="width: 100%;">
       <tr v-for="(label,index) in regulations.labels" :key="index">
         <td>{{label.type}}</td><td>{{label.description}}</td>
       </tr>
     </table>
+
+    <h2 class='title'><a class="anchor" id="contents" href="./#contents">Contents</a></h2>
+
+    <ul>
+      <li v-for="(article,index) in regulations.articles" :key="index">
+        Article {{article.id}}: <a :href="`article-${article.id}-${article.name}` | link">{{article.description.split(': ')[1]}}</a>
+      </li>
+    </ul>
+
+    <hr>
 
     <div class="article" v-for="(article,index) in regulations.articles" :key="index">
       <span class="anchor" :id="article.id"/>
@@ -19,11 +27,11 @@
 
       <ul>
         <div v-for="(regulation,regIndex) in article.regulations" :key="regIndex" :class="'indent-' + regulation.level">
-          <li v-if="regulation.description" :id="regulation.id">
+          <li v-if="regulation.description" class='regulation' :id="regulation.id">
             <span class="anchor" :id="regulation.id"/>
             <div><a class="anchor" :href="regulation.id | link">{{regulation.id}}</a>) {{regulation.description}}</div>
           </li>
-          <li v-for="(guideline,regIndex) in regulation.guidelines" :key="regIndex" :id="regulation.id + guideline.pluses">
+          <li v-for="(guideline,regIndex) in regulation.guidelines" :key="regIndex" class='guideline' :id="regulation.id + guideline.pluses">
             <span class="anchor" :id="regulation.id + guideline.pluses"/>
             <div><a :href="(guideline.id + guideline.pluses) | link">{{guideline.id + guideline.pluses}}</a>) <span class="tag">{{guideline.label}}</span> {{guideline.description}}</div>
           </li>
@@ -44,3 +52,7 @@ export default {
   }
 }
 </script>
+
+<style>
+
+</style>

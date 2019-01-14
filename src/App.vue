@@ -14,9 +14,11 @@
       </div>
     </nav>
 
-    <keep-alive include="Main" exclude="Search">
-      <router-view/>
-    </keep-alive>
+    <div id="page">
+      <keep-alive include="Main" exclude="Search">
+        <router-view/>
+      </keep-alive>
+    </div>
   </div>
 </template>
 
@@ -46,6 +48,34 @@ export default {
 
 body {
   font-weight: 300;
+  font-size: 14px;
+}
+
+body {
+  /* Never get smaller than this */
+}
+
+@media (min-width:600px) {
+  body {
+    font-size: 16px;
+  }
+}
+
+@media (min-width:800px) {
+  body {
+    font-size: .75em;
+  }
+}
+
+@media (min-width:1000px) {
+  body {
+    /* Never get larger than this */
+    font-size: 1em;
+  }
+}
+
+#page {
+  margin: 1em;
 }
 
 .tag {
@@ -61,7 +91,7 @@ body {
   margin-bottom: 20px;
 }
 
-ul li, ol li {
+ul regulation.li, ol regulation.li {
   line-height: 175%;
 }
 

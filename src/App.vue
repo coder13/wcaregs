@@ -1,13 +1,13 @@
 <template>
   <div id="app">
-    <nav class="navbar is-inline-flex-touch" role="navigation">
-      <div class="navbar-brand is-hidden-mobile">
+    <nav class="navbar is-flex" role="navigation">
+      <div class="navbar-brand is-inline-flex">
         <router-link class="navbar-item" style="display: block; line-height: 1em" to="/">
           <h1 style="margin: 0px">WCA-Regs</h1>
           <span style="font-size: .65em;">Version: {{this.$root.$data.regulations.version}}</span>
         </router-link>
       </div>
-      <div class="navbar-item stretch">
+      <div class="navbar-item field is-inline-flex stretch">
         <div class="control stretch">
           <input class="input" v-model="query" @keyup.13="updateRoute" type="text"/>
         </div>
@@ -76,6 +76,10 @@ body {
 
 #page {
   margin: 1em;
+}
+
+.navbar-item {
+  background-color: #e7e7e7;
 }
 
 .tag {

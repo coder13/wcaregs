@@ -29,11 +29,20 @@
         <div v-for="(regulation,regIndex) in article.regulations" :key="regIndex" :class="'indent-' + regulation.level">
           <li v-if="regulation.description" class='regulation' :id="regulation.id">
             <span class="anchor" :id="regulation.id"/>
-            <div><a class="anchor" :href="regulation.id | link">{{regulation.id}}</a>) {{regulation.description}}</div>
+            <div><a class="anchor" :href="regulation.id | link">{{regulation.id}}</a>)
+              <template v-for="desc in regulation.description">
+                <a v-if="!!desc.href" :href="`#${desc.href.split(':')[2]}`">{{desc.content}}</a>
+                <span v-else>{{desc.content}}</span>
+              </template>
+            </div>
           </li>
           <li v-for="(guideline,regIndex) in regulation.guidelines" :key="regIndex" class='guideline' :id="regulation.id + guideline.pluses">
             <span class="anchor" :id="regulation.id + guideline.pluses"/>
-            <div><a :href="(guideline.id + guideline.pluses) | link">{{guideline.id + guideline.pluses}}</a>) <span class="tag">{{guideline.label}}</span> {{guideline.description}}</div>
+            <div><a :href="(guideline.id + guideline.pluses) | link">{{guideline.id + guideline.pluses}}</a>) <span class="tag">{{guideline.label}}</span>
+              <template v-for="desc in guideline.description">
+                <a v-if="!!desc.href" :href="`#${desc.href.split(':')[2]}`">{{desc.content}}</a>
+                <span v-else>{{desc.content}}</span>
+              </template></div>
           </li>
         </div>
       </ul>

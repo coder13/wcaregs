@@ -18,15 +18,29 @@ const regexes = {
 const getArticle = (regulationId) => regulationId.match(/(1[012]|[1-9]|[A-Z])\w+/) ? regulationId.match(/(1[012]|[1-9]|[A-Z])\w+/)[1] : null
 
 function parseDescription(description, inlineToken) {
-  inlineToken.children.slice(1).forEach(child => {
-    if (child.type === 'text') {
-      description += child.content;
-    } else {
-      // TODO: figure out how we want to link regulations;
-    }
-  });
+  let desc = [{
+    content: description
+  }];
 
-  return description;
+  for (let i = 1; i < inlineToken.children.length;) {
+    let child = inlineToken.children[i];
+    if (child.type === 'text') {
+      desc.push({
+        content: child.content
+      });
+      i++;
+    } else if (child.type === 'link_open') {
+      console.log(child)
+      desc.push({
+        href: child.attrs[0][1],
+        content: inlineToken.children[i+1].content
+      });
+      // TODO: figure out how we want to link regulations;
+      i += 3;
+    }
+  }
+
+  return desc;
 }
 
 function findArticle(articles, article) {
@@ -76,7 +90,6 @@ let rules = {
       let guideline = regexes.guideline.exec(textToken.content);
       if (guideline !== null) {
         let article = findArticle(state.articles, getArticle(guideline[1]));
-        console.log(guideline[1], !!findArticle(state.articles, getArticle(guideline[1]), JSON.stringify(state.articles.map(i => i.id))))
         let regulation = article.regulations.find(r => r.id === guideline[1]);
         if (regulation) { // Not all guidelines attach to regulations
           regulation.guidelines.push({

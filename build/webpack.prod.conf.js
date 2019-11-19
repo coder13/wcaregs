@@ -9,6 +9,7 @@ const merge = require('webpack-merge')
 const baseWebpackConfig = require('./webpack.base.conf')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
@@ -69,6 +70,24 @@ const webpackConfig = merge(baseWebpackConfig, {
       chunksSortMode: 'dependency',
       serviceWorkerLoader: `<script>${loadMinified(path.join(__dirname,
         './service-worker-prod.js'))}</script>`
+    }),
+    new FaviconsWebpackPlugin({
+      logo: './static/img/icons/favicon.svg',
+      mode: 'webapp',
+      devMode: 'webapp',
+      inject: true,
+      favicons: {
+        appName: 'wcaregs',
+        appDescription: 'Combines WCA Regulations and Guidelines into a single, easy to read, searchable webpage.',
+        developerName: 'Caleb Hoover',
+        developerURL: 'https://calebhoover.com',
+        background: '#000000',
+        theme_color: '#4DBA87',
+        icons: {
+          coast: false,
+          yandex: false
+        }
+      }
     }),
     // generate 404 page
     new HtmlWebpackPlugin({

@@ -1,4 +1,4 @@
 [submodule "wca-regulations"]
 	path = wca-regulations
-	url = git@github.com:thewca/wca-regulations.git
+	url = https://github.com/thewca/wca-regulations
 	branch = official

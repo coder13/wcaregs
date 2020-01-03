@@ -2,6 +2,8 @@
 
 Parses WCA Regulations and Guidelines, combines them into a single page so that both can be read / searched at the same time
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/339d0924-c0bd-4374-99ce-009546873b8d/deploy-status)](https://app.netlify.com/sites/wcaregs/deploys)
+
 ## Build Setup
 
 ``` bash

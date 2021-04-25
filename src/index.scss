@@ -1,0 +1,48 @@
+@charset "utf-8";
+
+@import url('https://fonts.googleapis.com/css?family=Nunito:400,700');
+
+// font
+
+$size-1: 1vw;
+
+// colors
+
+$primary: #e64503;
+$primary-invert: findColorInvert($primary);
+
+// Links
+$link: $primary;
+$link-invert: $primary-invert;
+$link-focus-border: $primary;
+
+$navbar-background-color: #e7e7e7;
+$navbar-item-color: #000;
+
+@import '../node_modules/bulma/sass/utilities/_all.sass';
+@import '../node_modules/bulma/sass/base/_all.sass';
+@import '../node_modules/bulma/sass/elements/button.sass';
+@import '../node_modules/bulma/sass/elements/container.sass';
+@import '../node_modules/bulma/sass/elements/form.sass';
+@import '../node_modules/bulma/sass/elements/title.sass';
+@import '../node_modules/bulma/sass/components/navbar.sass';
+@import '../node_modules/bulma/sass/layout/hero.sass';
+@import '../node_modules/bulma/sass/layout/section.sass';
+
+.stretch {
+  flex-grow: 1;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}

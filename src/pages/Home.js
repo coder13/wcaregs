@@ -6,11 +6,13 @@ function Home()  {
     <div id="home">
       <div className="container">
         <table className="table" style={{width: '100%'}}>
-          {regulations.labels.map((label) => (
-            <tr key={label.type}>
-              <td>{label.type}</td><td>{label.description}</td>
-            </tr>
-          ))}
+          <tbody>
+            {regulations.labels.map((label) => (
+              <tr key={label.type}>
+                <td>{label.type}</td><td>{label.description}</td>
+              </tr>
+            ))}
+          </tbody>
         </table>
 
         <h2 className='title'><a className="anchor" id="contents" href="./#contents">Contents</a></h2>
@@ -25,9 +27,8 @@ function Home()  {
 
         <hr />
 
-
         {regulations.articles.map((article) =>
-          <Article article={article} />
+          <Article key={article.id} article={article} />
         )}
       </div>
     </div>

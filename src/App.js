@@ -1,34 +1,25 @@
+import Home from './pages/Home';
+import regulations from './assets/regulationsAndGuidelines.json';
 
 function App() {
   return (
-    <div className="App">
-      <h1 className="title">Bulma</h1>
-      <p className="subtitle">
-        Modern CSS framework based on{' '}
-        <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flexible_Box_Layout/Basic_Concepts_of_Flexbox">
-          Flexbox
-        </a>
-      </p>
-
-      <div className="field">
-        <div className="control">
-          <input className="input" type="text" placeholder="Input" />
+    <div id="app">
+      <nav className="navbar is-flex" role="navigation">
+        <div className="navbar-brand is-inline-flex">
+          <div className="navbar-item" style={{display: 'block', lineHeight: '1em'}} to="/">
+            <h1 style={{margin: '0px'}}>WCA-Regs</h1>
+            <span style={{fontSize: '.65em'}}>Version: {regulations.version}</span>
+          </div>
         </div>
-      </div>
+        <div className="navbar-item field is-inline-flex stretch">
+          <div className="control stretch">
+            <input className="input" v-model="query" type="text"/>
+          </div>
+        </div>
+      </nav>
 
-      <div className="field">
-        <p className="control">
-          <span className="select">
-            <select>
-              <option>Select dropdown</option>
-            </select>
-          </span>
-        </p>
-      </div>
-
-      <div className="buttons">
-        <a className="button is-primary">Primary</a>
-        <a className="button is-link">Link</a>
+      <div id="page">
+        <Home />
       </div>
     </div>
   );

@@ -29,6 +29,12 @@ You then install the node modules:
 yarn install
 ```
 
+The regulations json will not be included so you must build it to keep with the most up-to-date regs.
+
+```bash
+yarn regsAndGuides
+```
+
 And then start up the dev server:
 
 ```bash

@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const chalk = require('chalk');
 const almphanumbericCompare = require('alphanumeric-sort').compare;
 const markdownItAST = require('markdown-it-ast')
 const markdownIt = require('markdown-it')({
@@ -17,7 +18,7 @@ const regexes = {
 
 const getArticle = (regulationId) => regulationId.match(/(1[012]|[1-9]|[A-Z])\w+/) ? regulationId.match(/(1[012]|[1-9]|[A-Z])\w+/)[1] : null
 
-function parseDescription(description, inlineToken) {
+const parseDescription = (description, inlineToken) => {
   let desc = [{
     content: description
   }];
@@ -30,7 +31,6 @@ function parseDescription(description, inlineToken) {
       });
       i++;
     } else if (child.type === 'link_open') {
-      console.log(child)
       desc.push({
         href: child.attrs[0][1],
         content: inlineToken.children[i+1].content
@@ -43,11 +43,9 @@ function parseDescription(description, inlineToken) {
   return desc;
 }
 
-function findArticle(articles, article) {
-  return articles.find(a => a.id.slice(0, article.length) === article);
-}
+const findArticle = (articles, article) => articles.find(a => a.id.slice(0, article.length) === article);
 
-let rules = {
+const rules = {
   heading (state, token, level) {
     let inline = token.children[0];
     if (inline.content[0] !== '<') // Probably not worth looking at
@@ -98,7 +96,7 @@ let rules = {
             pluses: guideline[2],
             label: guideline[3],
             description: parseDescription(guideline[4], inline)
-          })
+          });
         } else { // create a dummy regulation with no description and just the guideline
           article.regulations.push({
             id: guideline[1],
@@ -121,14 +119,14 @@ let rules = {
             level: regulation[1].length - 1,
             description: parseDescription(regulation[2], inline),
             guidelines: []
-          })
+          });
         }
       }
     }
   }
 };
 
-function traverse(state, token, level) {
+const traverse = (state, token, level) => {
   if (!token.type) {
     token.type = token.nodeType; // freaking inconsistency
   }
@@ -145,25 +143,35 @@ function traverse(state, token, level) {
   }
 }
 
-let regulations = String(fs.readFileSync(path.resolve(__dirname, './wca-regulations/wca-regulations.md')));
-let guidelines = String(fs.readFileSync(path.resolve(__dirname, './wca-regulations/wca-guidelines.md')));
+const buildRegsAndGuidelines = () => {
+  const regulations = String(fs.readFileSync(path.resolve(__dirname, './wca-regulations/wca-regulations.md')));
+  const guidelines = String(fs.readFileSync(path.resolve(__dirname, './wca-regulations/wca-guidelines.md')));
 
-const state = {
-  version: null,
-  labels: [],
-  articles: [],
-};
+  const state = {
+    version: null,
+    labels: [],
+    articles: [],
+  };
 
+  markdownItAST.makeAST(markdownIt.parse(regulations, {}))
+    .forEach(child => traverse(state, child, 0));
+  
+  markdownItAST.makeAST(markdownIt.parse(guidelines, {}))
+    .forEach(child => traverse(state, child, 0));
+  
+  state.articles.sort((a,b) => almphanumbericCompare(a.id, b.id))
 
+  return state;
+}
 
-markdownItAST.makeAST(markdownIt.parse(regulations, {}))
-  .forEach(child => traverse(state, child, 0));
+const outputFile = path.resolve(__dirname, './src/assets/regulationsAndGuidelines.json');
+const commit = String(fs.readFileSync(path.resolve(__dirname, '.git/modules/wca-regulations/HEAD'))).substring(0, 7);
 
-markdownItAST.makeAST(markdownIt.parse(guidelines, {}))
-  .forEach(child => traverse(state, child, 0));
+console.log('Building with wca-regulations commit', chalk.green(commit))
 
-state.articles.sort((a,b) => almphanumbericCompare(a.id, b.id))
+const regsAndGuidlinesJSON = buildRegsAndGuidelines();
 
-fs.writeFile(path.resolve(__dirname, './src/assets/regulationsAndGuidelines.json'), JSON.stringify(state), function () {
-  console.log('Wrote file to /src/assets/regulationsAndGuidelines.json');
+console.log(`Regs version: ${chalk.green(regsAndGuidlinesJSON.version)}`);
+fs.writeFile(outputFile, JSON.stringify(regsAndGuidlinesJSON), function () {
+  console.log(`Wrote to ${chalk.green(outputFile)}`);
 });

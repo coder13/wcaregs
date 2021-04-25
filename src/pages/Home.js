@@ -18,7 +18,7 @@ function Home()  {
         <ul>
           {regulations.articles.map((article) => (
             <li key={article.id}>
-              Article {article.id}: <a href={`article-${article.id}-${article.name}`}>{article.description.split(': ')[1]}</a>
+              Article {article.id}: <a href={`#article-${article.id}-${article.name}`}>{article.description.split(': ')[1]}</a>
             </li>
           ))}
         </ul>

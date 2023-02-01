@@ -45,4 +45,4 @@ This project was bootstraped with create-react-app so further help can be found 
 
 ## Update
 
-Whenever new regulations are released, clone repo, and do `git submodule update -remote`, then commit and push.
+Whenever new regulations are released, clone repo, and do `git submodule update --remote`, then commit and push.

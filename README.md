@@ -42,3 +42,7 @@ yarn start
 ```
 
 This project was bootstraped with create-react-app so further help can be found in their [docs](https://facebook.github.io/create-react-app/docs/getting-started).
+
+## Update
+
+Whenever new regulations are released, clone repo, and do `git submodule update -remote`, then commit and push.

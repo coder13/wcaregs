@@ -18,7 +18,7 @@ function Article({ article }) {
                   <a className="anchor" href={'#' + regulation.id}>{regulation.id}</a>{') '}  
                   {regulation.description.map((desc, index) => (
                     desc.href
-                      ? <a key={desc.content + index} href={`#${desc.href.split(':')[2]}`}>{desc.content}</a>
+                      ? <a key={desc.content + index} href={desc.href.startsWith('http') ? desc.href : `#${desc.href.split(':')[2]}`}>{desc.content}</a>
                       : <span key={desc.content + index}>{desc.content}</span>
                   ))}
                 </div>
@@ -33,7 +33,7 @@ function Article({ article }) {
                   <span className="tag">{guideline.label}</span>{' '}
                   {guideline.description.map((desc, index) => (
                     desc.href
-                      ? <a key={desc.content + index} href={`#${desc.href.split(':')[2]}`}>{desc.content}</a>
+                      ? <a key={desc.content + index} href={desc.href.startsWith('http') ? desc.href : `#${desc.href.split(':')[2]}`}>{desc.content}</a>
                       : <span key={desc.content + index}>{desc.content}</span>
                   ))}  
                 </div>

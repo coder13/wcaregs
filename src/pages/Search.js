@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Link, useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import flatten from 'lodash.flatten'
 import {compare as almphanumbericCompare} from 'alphanumeric-sort'
 import Fuse from 'fuse.js'
@@ -103,7 +103,7 @@ function Search() {
           {regulationsToShow.map((regulation) => (
             <li key={regulation.item.id}>
               <span className="anchor" id={regulation.item.id}/>
-              <Link to={'/#' + regulation.item.id}>{regulation.item.id}</Link>{') '}
+              <a href={'/#' + regulation.item.id}>{regulation.item.id}</a>{') '}
               {regulation.item.label && <span className="tag">{regulation.item.label}</span>}
               <span dangerouslySetInnerHTML={{__html: regulation.highlight || regulation.item.description}} />
             </li>

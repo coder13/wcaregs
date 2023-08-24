@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Link, useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 import flatten from 'lodash.flatten'
 import {compare as almphanumbericCompare} from 'alphanumeric-sort'
 import Fuse from 'fuse.js'

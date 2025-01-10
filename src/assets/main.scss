@@ -1,0 +1,118 @@
+@charset "utf-8";
+
+$wca_regs_primary: #e64503 !default;
+// $wca_regs_primary-invert: findColorInvert($wca_regs_primary) !default;
+
+@use "bulma/sass/utilities" with (
+  $size-1: 1vw,
+  $primary: $wca_regs_primary,
+  // $primary-invert: $wca_regs_primary-invert
+  $link: $wca_regs_primary,
+  // $link-invert: $wca_regs_primary-invert,
+  // $link-focus-border: $wca_regs_primary,
+  $red: pink
+);
+
+// Override Sass variables from the /form folder
+@forward "bulma/sass/form";
+@forward "bulma/sass/base";
+
+@use "bulma/sass/components/navbar" with (
+  $navbar-background-color: #e7e7e7,
+  $navbar-item-color: #000
+);
+
+@forward "bulma/sass/elements";
+@forward "bulma/sass/layout";
+
+// Import the themes so that all CSS variables have a value
+@forward "bulma/sass/themes";
+
+// Import the Google Font
+@import url("https://fonts.googleapis.com/css?family=Nunito:400,700");
+
+.stretch {
+  flex-grow: 1;
+}
+
+body {
+  font-weight: 300;
+  font-size: 14px;
+}
+
+@media (min-width: 600px) {
+  body {
+    font-size: 16px;
+  }
+}
+
+@media (min-width: 800px) {
+  body {
+    font-size: 0.75em;
+  }
+}
+
+@media (min-width: 1000px) {
+  body {
+    /* Never get larger than this */
+    font-size: 1em;
+  }
+}
+
+main {
+  margin: 1em;
+}
+
+.navbar-item {
+  background-color: #e7e7e7;
+}
+
+.tag {
+  font-weight: 500;
+}
+
+.article {
+  margin-top: 20px;
+}
+
+.article-title {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+ul regulation.li,
+ol regulation.li {
+  line-height: 175%;
+}
+
+ul {
+  margin-left: 2em;
+}
+
+.indent-1 {
+  margin-left: 0em;
+}
+
+.indent-2 {
+  margin-left: 2em;
+}
+
+.indent-3 {
+  margin-left: 4em;
+}
+
+.indent-4 {
+  margin-left: 8em;
+}
+
+:target > div {
+  background-color: yellow;
+}
+
+:target > div > .tag {
+  background-color: rgb(240, 240, 0);
+}
+
+.highlight {
+  background: yellow;
+}

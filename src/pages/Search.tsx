@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Fuse from "fuse.js";
-import REGULATIONS from "../assets/regulationsAndGuidelines.json";
+import { RegulationsContext } from "../providers/RegulationsProvider/RegulationsProvider";
 
 const sortAlphaNum = (a: string, b: string) =>
   a.localeCompare(b, "en", { numeric: true });
@@ -63,45 +63,47 @@ const highlight = function (resultItem) {
   });
 };
 
-const flatRegulations = REGULATIONS.articles.flatMap((a) => {
-  let article = {
-    type: "regulation",
-    id: a.id,
-    name: a.name,
-    name2: a.name2,
-    description: a.description,
-  };
-
-  return a.regulations.flatMap((r) =>
-    [
-      {
-        article,
-        id: r.id,
-        level: r.level,
-        description: r.description
-          ? r.description.map((i) => i.content).join("")
-          : "",
-      },
-    ].concat(
-      r.guidelines.map((g) => ({
-        article,
-        type: "guideline",
-        label: g.label,
-        id: g.id + g.pluses,
-        level: g.level,
-        description: g.description
-          ? g.description.map((i) => i.content).join("")
-          : "",
-      }))
-    )
-  );
-});
-
-let fuse = new Fuse(flatRegulations, options);
-
 const useQuery = () => new URLSearchParams(useLocation().search);
 
 function Search() {
+  const { regulationsAndGuidelines } = useContext(RegulationsContext);
+
+  const flatRegulations = regulationsAndGuidelines.articles.flatMap((a) => {
+    let article = {
+      type: "regulation",
+      id: a.id,
+      name: a.name,
+      name2: a.name2,
+      description: a.description,
+    };
+
+    return a.regulations.flatMap((r) =>
+      [
+        {
+          article,
+          id: r.id,
+          level: r.level,
+          description: r.description
+            ? r.description.map((i) => i.content).join("")
+            : "",
+        },
+      ].concat(
+        r.guidelines.map((g) => ({
+          article,
+          type: "guideline",
+          label: g.label,
+          id: g.id + g.pluses,
+          level: g.level,
+          description: g.description
+            ? g.description.map((i) => i.content).join("")
+            : "",
+        }))
+      )
+    );
+  });
+
+  const fuse = new Fuse(flatRegulations, options);
+
   const navigate = useNavigate();
   const query = useQuery();
 

@@ -1,10 +1,50 @@
 /* takes both regulations and guidelins and combins them into one single json */
 
-const almphanumbericCompare = require("alphanumeric-sort").compare;
-const markdownItAST = require("markdown-it-ast");
-const markdownIt = require("markdown-it")({
-  html: true,
-});
+import markdownItAST from "markdown-it-ast";
+import markdownIt from "markdown-it";
+
+type Description = {
+  content: string;
+  href?: string;
+};
+
+type Guideline = {
+  id: string;
+  level: number;
+  pluses: string;
+  label: string;
+  description: Description[];
+};
+
+type Regulation = {
+  id: string;
+  level: number;
+  description: Description[];
+  guidelines: Guideline[];
+};
+
+type Article = {
+  id: string;
+  name: string;
+  name2: string;
+  description: string;
+  regulations: Regulation[];
+};
+
+type Label = {
+  type: string;
+  description: string;
+};
+
+export interface RegsAndGuidelines {
+  version: string;
+  labels: Label[];
+  articles: Article[];
+}
+
+const md = markdownIt({ html: true });
+
+const sortAlphaNum = (a, b) => a.localeCompare(b, "en", { numeric: true });
 
 const regexes = {
   article: /article\-(\w+)/,
@@ -19,7 +59,7 @@ const getArticle = (regulationId) =>
     : null;
 
 const parseDescription = (description, inlineToken) => {
-  let desc = [
+  let desc: Description[] = [
     {
       content: description,
     },
@@ -49,17 +89,17 @@ const findArticle = (articles, article) =>
   articles.find((a) => a.id.slice(0, article.length) === article);
 
 const rules = {
-  heading(state, token, level) {
-    let inline = token.children[0];
+  heading(state, token) {
+    const inline = token.children[0];
     if (inline.content[0] !== "<")
       // Probably not worth looking at
       return;
 
-    let trimmed = inline.children.map((i) =>
+    const trimmed = inline.children.map((i) =>
       i.content.replace("<", "").replace(">", "")
     );
 
-    let article = regexes.article.exec(trimmed[0]);
+    const article = regexes.article.exec(trimmed[0]);
 
     // looking at an article and hasn't been added yet
     if (article && !findArticle(state.articles, article[1])) {
@@ -74,28 +114,32 @@ const rules = {
   },
 
   // form of text -> inline -> paragraph -> listitem
-  html_inline(state, token, level) {
+  html_inline(state, token) {
     if (token.content === "<version>") {
       state.version = token.parent.children[1].content.replace("Version: ", "");
     } else if (token.content === "<label>") {
       let label = regexes.label.exec(token.parent.content);
-      state.labels.push({
-        type: label[1],
-        description: label[2],
-      });
+      if (label) {
+        state.labels.push({
+          type: label[1],
+          description: label[2],
+        });
+      }
     }
   },
 
   // look for text nodes inside a list item node that isn't a label
-  list_item(state, token, level) {
-    let inline = token.children[0].children[0];
+  list_item(state, token) {
+    const inline = token.children[0].children[0];
     if (inline.children[0].content !== "<label>") {
       // regulation / guideline
-      let textToken = inline.children[0];
-      let guideline = regexes.guideline.exec(textToken.content);
+      const textToken = inline.children[0];
+      const guideline = regexes.guideline.exec(textToken.content);
       if (guideline !== null) {
-        let article = findArticle(state.articles, getArticle(guideline[1]));
-        let regulation = article.regulations.find((r) => r.id === guideline[1]);
+        const article = findArticle(state.articles, getArticle(guideline[1]));
+        const regulation = article.regulations.find(
+          (r) => r.id === guideline[1]
+        );
         if (regulation) {
           // Not all guidelines attach to regulations
           regulation.guidelines.push({
@@ -123,77 +167,62 @@ const rules = {
         }
       } else {
         // looks like it's a regulation
-        let regulation = regexes.regulation.exec(textToken.content);
-        let article = findArticle(state.articles, getArticle(regulation[1]));
-        if (article) {
-          article.regulations.push({
-            id: regulation[1],
-            level: regulation[1].length - 1,
-            description: parseDescription(regulation[2], inline),
-            guidelines: [],
-          });
+        const regulation = regexes.regulation.exec(textToken.content);
+        if (regulation) {
+          const article = findArticle(
+            state.articles,
+            getArticle(regulation[1])
+          );
+          if (article) {
+            article.regulations.push({
+              id: regulation[1],
+              level: regulation[1].length - 1,
+              description: parseDescription(regulation[2], inline),
+              guidelines: [],
+            });
+          }
         }
       }
     }
   },
 };
 
-const traverse = (state, token, level) => {
+const traverse = (state, token) => {
   if (!token.type) {
-    token.type = token.nodeType; // freaking inconsistency
+    token.type = token.nodeType;
   }
 
   if (rules[token.type]) {
-    rules[token.type](state, token, level);
+    rules[token.type](state, token);
   }
 
   if (token.children) {
     token.children.forEach((child) => {
       child.parent = token;
-      traverse(state, child, level + 1);
+      traverse(state, child);
     });
   }
 };
 
-export const buildRegsAndGuidelines = (regulations, guidelines) => {
-  // const regulations = String(
-  //   fs.readFileSync(
-  //     path.resolve(__dirname, "./wca-regulations/wca-regulations.md")
-  //   )
-  // );
-  // const guidelines = String(
-  //   fs.readFileSync(
-  //     path.resolve(__dirname, "./wca-regulations/wca-guidelines.md")
-  //   )
-  // );
-
-  const state = {
-    version: null,
+export const buildRegsAndGuidelines = (
+  regulations: string,
+  guidelines: string
+): RegsAndGuidelines => {
+  const state: RegsAndGuidelines = {
+    version: "",
     labels: [],
     articles: [],
   };
 
   markdownItAST
-    .makeAST(markdownIt.parse(regulations, {}))
-    .forEach((child) => traverse(state, child, 0));
+    .makeAST(md.parse(regulations, {}))
+    .forEach((child) => traverse(state, child));
 
   markdownItAST
-    .makeAST(markdownIt.parse(guidelines, {}))
-    .forEach((child) => traverse(state, child, 0));
+    .makeAST(md.parse(guidelines, {}))
+    .forEach((child) => traverse(state, child));
 
-  state.articles.sort((a, b) => almphanumbericCompare(a.id, b.id));
+  state.articles.sort((a, b) => sortAlphaNum(a.id, b.id));
 
   return state;
 };
-
-// const outputFile = path.resolve(__dirname, './src/assets/regulationsAndGuidelines.json');
-// const commit = String(fs.readFileSync(path.resolve(__dirname, '.git/modules/wca-regulations/HEAD'))).substring(0, 7);
-
-// console.log('Building with wca-regulations commit', chalk.green(commit))
-
-// const regsAndGuidlinesJSON = buildRegsAndGuidelines();
-
-// console.log(`Regs version: ${chalk.green(regsAndGuidlinesJSON.version)}`);
-// fs.writeFile(outputFile, JSON.stringify(regsAndGuidlinesJSON), function () {
-//   console.log(`Wrote to ${chalk.green(outputFile)}`);
-// });

@@ -1,9 +1,10 @@
 import { useEffect } from "react";
-import { useLocation, useHistory } from "react-router-dom";
-import flatten from "lodash.flatten";
-import { compare as almphanumbericCompare } from "alphanumeric-sort";
+import { useLocation, useNavigate } from "react-router-dom";
 import Fuse from "fuse.js";
 import REGULATIONS from "../assets/regulationsAndGuidelines.json";
+
+const sortAlphaNum = (a: string, b: string) =>
+  a.localeCompare(b, "en", { numeric: true });
 
 const options = {
   threshold: 0.2,
@@ -32,7 +33,7 @@ const highlight = function (resultItem) {
       return resultItem;
     }
 
-    let result = [];
+    let result: string[] = [];
     let matches = [].concat(matchItem.indices).filter((i) => i[1] - i[0] > 3);
     let pair = matches.shift();
 
@@ -62,63 +63,60 @@ const highlight = function (resultItem) {
   });
 };
 
-const flatRegulations = flatten(
-  REGULATIONS.articles.map((a) => {
-    let article = {
-      type: "regulation",
-      id: a.id,
-      name: a.name,
-      name2: a.name2,
-      description: a.description,
-    };
+const flatRegulations = REGULATIONS.articles.flatMap((a) => {
+  let article = {
+    type: "regulation",
+    id: a.id,
+    name: a.name,
+    name2: a.name2,
+    description: a.description,
+  };
 
-    return flatten(
-      a.regulations.map((r) =>
-        [
-          {
-            article,
-            id: r.id,
-            level: r.level,
-            description: r.description
-              ? r.description.map((i) => i.content).join("")
-              : "",
-          },
-        ].concat(
-          r.guidelines.map((g) => ({
-            article,
-            type: "guideline",
-            label: g.label,
-            id: g.id + g.pluses,
-            level: g.level,
-            description: g.description
-              ? g.description.map((i) => i.content).join("")
-              : "",
-          }))
-        )
-      )
-    );
-  })
-);
+  return a.regulations.flatMap((r) =>
+    [
+      {
+        article,
+        id: r.id,
+        level: r.level,
+        description: r.description
+          ? r.description.map((i) => i.content).join("")
+          : "",
+      },
+    ].concat(
+      r.guidelines.map((g) => ({
+        article,
+        type: "guideline",
+        label: g.label,
+        id: g.id + g.pluses,
+        level: g.level,
+        description: g.description
+          ? g.description.map((i) => i.content).join("")
+          : "",
+      }))
+    )
+  );
+});
 
 let fuse = new Fuse(flatRegulations, options);
 
 const useQuery = () => new URLSearchParams(useLocation().search);
 
 function Search() {
-  const history = useHistory();
+  const navigate = useNavigate();
   const query = useQuery();
+
   console.log(query.get("q"));
 
-  let regulationsToShow = fuse
-    .search(query.get("q"))
-    .map((i) => highlight(i)[0]);
-  regulationsToShow = regulationsToShow.sort((a, b) => {
-    return almphanumbericCompare(a.item.id, b.item.id);
+  const q = query.get("q");
+
+  const regulationsToShow = q ? fuse.search(q).map((i) => highlight(i)[0]) : [];
+  const regulationsToShowSorted = regulationsToShow.sort((a, b) => {
+    return sortAlphaNum(a.item.id, b.item.id);
   });
 
   useEffect(() => {
     if (query.get("q") === "") {
-      history.push("/");
+      navigate("/");
     }
   });
 
@@ -126,7 +124,7 @@ function Search() {
     <section>
       <div className="container">
         <ul>
-          {regulationsToShow.map((regulation) => (
+          {regulationsToShowSorted.map((regulation) => (
             <li key={regulation.item.id}>
               <span className="anchor" id={regulation.item.id} />
               <a href={"/#" + regulation.item.id}>{regulation.item.id}</a>

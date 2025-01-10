@@ -1,13 +1,18 @@
-import regulations from "../assets/regulationsAndGuidelines.json";
+import { useContext } from "react";
 import Article from "../components/Article";
+import { RegulationsContext } from "../providers/RegulationsProvider/RegulationsProvider";
 
 function Home() {
+  const { regulationsAndGuidelines } = useContext(RegulationsContext);
+
+  console.log(8, regulationsAndGuidelines);
+
   return (
     <section id="home">
       <div className="container">
         <table className="table" style={{ width: "100%" }}>
           <tbody>
-            {regulations.labels.map((label) => (
+            {regulationsAndGuidelines.labels.map((label) => (
               <tr key={label.type}>
                 <td>{label.type}</td>
                 <td>{label.description}</td>
@@ -23,7 +28,7 @@ function Home() {
         </h2>
 
         <ul>
-          {regulations.articles.map((article) => (
+          {regulationsAndGuidelines.articles.map((article) => (
             <li key={article.id}>
               Article {article.id}:{" "}
               <a href={`#article-${article.id}-${article.name}`}>
@@ -35,7 +40,7 @@ function Home() {
 
         <hr />
 
-        {regulations.articles.map((article) => (
+        {regulationsAndGuidelines.articles.map((article) => (
           <Article key={article.id} article={article} />
         ))}
       </div>

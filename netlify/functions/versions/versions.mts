@@ -9,8 +9,6 @@ export default async () => {
       repo: "wca-regulations",
     });
 
-    console.log(releases.data);
-
     const response = new Response(JSON.stringify(releases.data));
 
     response.headers.set("Access-Control-Allow-Origin", "*");

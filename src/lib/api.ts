@@ -1,45 +1,24 @@
-import { Octokit } from "octokit";
+import { Endpoints } from "@octokit/types";
+import { RegsAndGuidelines } from "./parser";
 
-const octokit = new Octokit();
+export type ReleasesData =
+  Endpoints["GET /repos/{owner}/{repo}/releases"]["response"]["data"];
 
-export const fetchReleases = () =>
-  octokit.rest.repos.listReleases({
-    owner: "thewca",
-    repo: "wca-regulations",
-  });
+export const fetchReleases = async (): Promise<ReleasesData> => {
+  const cached = localStorage.getItem("releases");
+  if (cached) {
+    return JSON.parse(cached) as ReleasesData;
+  }
 
-export const fetchRegulations = async (ref = "master") => {
-  const file = await octokit.rest.repos.getContent({
-    owner: "thewca",
-    repo: "wca-regulations",
-    path: "wca-regulations.md",
-    ref,
-    mediaType: {
-      format: "raw",
-    },
-  });
+  const res = await fetch("/.netlify/functions/versions");
+  const releases = await res.json();
 
-  // if (file.status !== 200) {
-  //   throw new Error("Failed to fetch regulations");
-  // }
+  localStorage.setItem("releases", JSON.stringify(releases));
 
-  return file.data as unknown as string;
+  return releases as unknown as ReleasesData;
 };
 
-export const fetchGuidelines = async (ref = "master") => {
-  const file = await octokit.rest.repos.getContent({
-    owner: "thewca",
-    repo: "wca-regulations",
-    path: "wca-guidelines.md",
-    ref,
-    mediaType: {
-      format: "raw",
-    },
-  });
-
-  // if (file.status !== 200) {
-  //   throw new Error("Failed to fetch guidelines");
-  // }
-
-  return file.data as unknown as string;
+export const fetchVersion = async (version: string) => {
+  const res = await fetch(`/.netlify/functions/version?tag=${version}`);
+  return (await res.json()) as RegsAndGuidelines;
 };

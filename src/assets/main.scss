@@ -3,27 +3,29 @@
 $wca_regs_primary: #e64503 !default;
 // $wca_regs_primary-invert: findColorInvert($wca_regs_primary) !default;
 
-@use "bulma/sass/utilities" with (
+@use "bulma/sass/utilities" as * with (
   $size-1: 1vw,
   $primary: $wca_regs_primary,
   // $primary-invert: $wca_regs_primary-invert
   $link: $wca_regs_primary,
   // $link-invert: $wca_regs_primary-invert,
   // $link-focus-border: $wca_regs_primary,
-  $red: pink
 );
 
 // Override Sass variables from the /form folder
 @forward "bulma/sass/form";
 @forward "bulma/sass/base";
 
-@use "bulma/sass/components/navbar" with (
-  $navbar-background-color: #e7e7e7,
-  $navbar-item-color: #000
-);
+@use "bulma/sass/components/navbar";
+@use "bulma/sass/components/dropdown";
+@use "bulma/sass/components";
+// $navbar-background-color: #e7e7e7,
+// $navbar
+// $navbar-item-color: #000
 
 @forward "bulma/sass/elements";
 @forward "bulma/sass/layout";
+@forward "bulma/sass/helpers";
 
 // Import the themes so that all CSS variables have a value
 @forward "bulma/sass/themes";
@@ -80,13 +82,23 @@ main {
   margin-bottom: 20px;
 }
 
-ul regulation.li,
-ol regulation.li {
+ul regulation.li {
   line-height: 175%;
 }
 
+.regulation,
+.guideline {
+  background-color: #fff;
+  padding: 0.25em;
+  transition: all 10ms;
+
+  &:hover {
+    filter: brightness(95%);
+  }
+}
+
 ul {
-  margin-left: 2em;
+  margin-left: 0em;
 }
 
 .indent-1 {
@@ -105,11 +117,11 @@ ul {
   margin-left: 8em;
 }
 
-:target > div {
+:target {
   background-color: yellow;
 }
 
-:target > div > .tag {
+:target > .tag {
   background-color: rgb(240, 240, 0);
 }
 

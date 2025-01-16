@@ -5,7 +5,6 @@ import { RegulationsContext } from "../providers/RegulationsProvider/Regulations
 function Home() {
   const { regulationsAndGuidelines } = useContext(RegulationsContext);
 
-  console.log(8, regulationsAndGuidelines);
 
   return (
     <section id="home">

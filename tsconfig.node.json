@@ -13,12 +13,15 @@
     "isolatedModules": true,
     "moduleDetection": "force",
     "noEmit": true,
+    "allowJs": true,
+    "noImplicitAny": false,
 
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "netlify/functions/**/*.mts"]
 }

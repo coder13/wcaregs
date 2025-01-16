@@ -4,6 +4,7 @@
   "private": true,
   "license": "MIT",
   "dependencies": {
+    "@netlify/functions": "^3.0.0",
     "@octokit/types": "^13.7.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
@@ -20,10 +21,12 @@
     "markdown-it": "^12.0.6",
     "markdown-it-ast": "^0.0.1",
     "octokit": "^4.1.0",
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
-    "react-bulma-components": "^4.0.0",
+    "react-bulma-components": "^4.1.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6",
+    "react-tiny-popover": "^8.1.4",
     "sass": "^1.83.1",
     "ts-node": "^10.9.2",
     "typescript": "~5.6.2",
@@ -53,6 +56,7 @@
     ]
   },
   "devDependencies": {
-    "chalk": "^4.1.1"
+    "chalk": "^4.1.1",
+    "eslint-plugin-react-hooks": "^5.1.0"
   }
 }

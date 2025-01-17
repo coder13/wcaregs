@@ -44,14 +44,13 @@ export const Header: React.FC = () => {
             newQueryParams.set("version", release.tag_name);
 
             return (
-              <Dropdown.Item key={release.id} value={release.tag_name}>
-                <Link
-                  to={`${
-                    location.pathname
-                  }?${newQueryParams.toString()}${hash}`}
-                >
-                  <p className="is-small">{name}</p>
-                </Link>
+              <Dropdown.Item
+                key={release.id}
+                value={release.tag_name}
+                renderAs={Link}
+                to={`${location.pathname}?${newQueryParams.toString()}${hash}`}
+              >
+                <p className="is-small">{name}</p>
               </Dropdown.Item>
             );
           })}

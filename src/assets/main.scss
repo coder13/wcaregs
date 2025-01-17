@@ -1,15 +1,11 @@
 @charset "utf-8";
 
 $wca_regs_primary: #e64503 !default;
-// $wca_regs_primary-invert: findColorInvert($wca_regs_primary) !default;
 
 @use "bulma/sass/utilities" as * with (
   $size-1: 1vw,
   $primary: $wca_regs_primary,
-  // $primary-invert: $wca_regs_primary-invert
-  $link: $wca_regs_primary,
-  // $link-invert: $wca_regs_primary-invert,
-  // $link-focus-border: $wca_regs_primary,
+  $link: $wca_regs_primary
 );
 
 // Override Sass variables from the /form folder
@@ -18,10 +14,7 @@ $wca_regs_primary: #e64503 !default;
 
 @use "bulma/sass/components/navbar";
 @use "bulma/sass/components/dropdown";
-@use "bulma/sass/components";
-// $navbar-background-color: #e7e7e7,
-// $navbar
-// $navbar-item-color: #000
+// @use "bulma/sass/components";
 
 @forward "bulma/sass/elements";
 @forward "bulma/sass/layout";
@@ -116,14 +109,6 @@ ul {
 .indent-4 {
   margin-left: 8em;
 }
-
-// :target {
-//   background-color: yellow;
-// }
-
-// :target > .tag {
-//   background-color: rgb(240, 240, 0);
-// }
 
 .highlight {
   background: yellow;

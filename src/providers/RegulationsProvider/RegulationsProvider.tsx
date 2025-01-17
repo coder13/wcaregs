@@ -1,33 +1,11 @@
-import {
-  createContext,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { fetchReleases, fetchVersion, ReleasesData } from "../../lib/api";
 import { RegsAndGuidelines } from "../../lib/parser";
 import { useLocation } from "react-router-dom";
-
-interface RegulationsContextProps {
-  releases: ReleasesData;
-  version: string;
-  fetchVersion: (ref: string) => void;
-  regulationsAndGuidelines: RegsAndGuidelines;
-}
-
-const emptyRegulationsAndGuidelines = {
-  version: "",
-  labels: [],
-  articles: [],
-};
-
-export const RegulationsContext = createContext<RegulationsContextProps>({
-  releases: [],
-  version: "",
-  fetchVersion: () => {},
-  regulationsAndGuidelines: emptyRegulationsAndGuidelines,
-});
+import {
+  emptyRegulationsAndGuidelines,
+  RegulationsContext,
+} from "./RegulationsContext";
 
 export const RegulationsProvider = ({ children }) => {
   const [ref, setRef] = useState<string>("");
@@ -58,12 +36,6 @@ export const RegulationsProvider = ({ children }) => {
     }
   }, [releases, version]);
 
-  useEffect(() => {
-    if (ref) {
-      getVersion(ref);
-    }
-  }, [ref]);
-
   const getVersion = useCallback(async (versionTag: string) => {
     setRef(versionTag);
     const version = await fetchVersion(versionTag);
@@ -71,6 +43,12 @@ export const RegulationsProvider = ({ children }) => {
       (prev) => new Map(prev.set(versionTag, version))
     );
   }, []);
+
+  useEffect(() => {
+    if (ref) {
+      getVersion(ref);
+    }
+  }, [getVersion, ref]);
 
   const regulationsAndGuidelines = useMemo(
     () => regulationsAndGuidelinesMap.get(ref) || emptyRegulationsAndGuidelines,

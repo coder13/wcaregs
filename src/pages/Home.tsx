@@ -1,10 +1,8 @@
-import { useContext } from "react";
 import Article from "../components/Article";
-import { RegulationsContext } from "../providers/RegulationsProvider/RegulationsProvider";
+import { useRegulations } from "../providers/RegulationsProvider/RegulationsContext";
 
 function Home() {
-  const { regulationsAndGuidelines } = useContext(RegulationsContext);
-
+  const { regulationsAndGuidelines } = useRegulations();
 
   return (
     <section id="home">

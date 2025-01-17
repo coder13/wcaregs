@@ -47,7 +47,7 @@ const md = markdownIt({ html: true });
 const sortAlphaNum = (a, b) => a.localeCompare(b, "en", { numeric: true });
 
 const regexes = {
-  article: /article\-(\w+)/,
+  article: /article-(\w+)/,
   label: /\[(\w+)\]\s(.+)/,
   guideline: /(\w+)(\++)\)\s\[(\w+)\]\s(.+)/,
   regulation: /(\w+)\)\s(.+)/,
@@ -59,14 +59,14 @@ const getArticle = (regulationId) =>
     : null;
 
 const parseDescription = (description, inlineToken) => {
-  let desc: Description[] = [
+  const desc: Description[] = [
     {
       content: description,
     },
   ];
 
   for (let i = 1; i < inlineToken.children.length; ) {
-    let child = inlineToken.children[i];
+    const child = inlineToken.children[i];
     if (child.type === "text") {
       desc.push({
         content: child.content,
@@ -118,7 +118,7 @@ const rules = {
     if (token.content === "<version>") {
       state.version = token.parent.children[1].content.replace("Version: ", "");
     } else if (token.content === "<label>") {
-      let label = regexes.label.exec(token.parent.content);
+      const label = regexes.label.exec(token.parent.content);
       if (label) {
         state.labels.push({
           type: label[1],

@@ -1,7 +1,7 @@
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Fuse from "fuse.js";
-import { RegulationsContext } from "../providers/RegulationsProvider/RegulationsProvider";
+import { useRegulations } from "../providers/RegulationsProvider/RegulationsContext";
 
 const sortAlphaNum = (a: string, b: string) =>
   a.localeCompare(b, "en", { numeric: true });
@@ -28,17 +28,17 @@ const options = {
 // https://github.com/brunocechet/Fuse.js-with-highlight/blob/master/index.js
 const highlight = function (resultItem) {
   return resultItem.matches.map((matchItem) => {
-    let text = resultItem.item[matchItem.key];
+    const text = resultItem.item[matchItem.key];
     if (matchItem.key === "id") {
       return resultItem;
     }
 
-    let result: string[] = [];
-    let matches = [].concat(matchItem.indices).filter((i) => i[1] - i[0] > 3);
+    const result: string[] = [];
+    const matches = [].concat(matchItem.indices).filter((i) => i[1] - i[0] > 3);
     let pair = matches.shift();
 
     for (let i = 0; i < text.length; i++) {
-      let char = text.charAt(i);
+      const char = text.charAt(i);
       if (pair && i === pair[0]) {
         result.push('<span class="highlight">');
       }
@@ -66,10 +66,10 @@ const highlight = function (resultItem) {
 const useQuery = () => new URLSearchParams(useLocation().search);
 
 function Search() {
-  const { regulationsAndGuidelines } = useContext(RegulationsContext);
+  const { regulationsAndGuidelines } = useRegulations();
 
   const flatRegulations = regulationsAndGuidelines.articles.flatMap((a) => {
-    let article = {
+    const article = {
       type: "regulation",
       id: a.id,
       name: a.name,
@@ -107,9 +107,8 @@ function Search() {
   const navigate = useNavigate();
   const query = useQuery();
 
-  console.log(query.get("q"));
-
   const q = query.get("q");
+  const version = query.get("version");
 
   const regulationsToShow = q ? fuse.search(q).map((i) => highlight(i)[0]) : [];
   const regulationsToShowSorted = regulationsToShow.sort((a, b) => {
@@ -117,10 +116,16 @@ function Search() {
   });
 
   useEffect(() => {
-    if (query.get("q") === "") {
-      navigate("/");
+    if (!q) {
+      const newQuery =
+        version &&
+        new URLSearchParams({
+          version,
+        });
+
+      navigate(`/${newQuery ? `?${newQuery}` : ""}`);
     }
-  });
+  }, [navigate, q, query, version]);
 
   return (
     <section>
@@ -129,7 +134,15 @@ function Search() {
           {regulationsToShowSorted.map((regulation) => (
             <li key={regulation.item.id}>
               <span className="anchor" id={regulation.item.id} />
-              <a href={"/#" + regulation.item.id}>{regulation.item.id}</a>
+              <a
+                href={
+                  (version ? `?version=${version}` : "/") +
+                  `#` +
+                  regulation.item.id
+                }
+              >
+                {regulation.item.id}
+              </a>
               {") "}
               {regulation.item.label && (
                 <span className="tag">{regulation.item.label}</span>

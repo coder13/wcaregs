@@ -2,7 +2,10 @@ import { useLocation } from "react-router-dom";
 
 function Article({ article }) {
   const location = useLocation();
-  const url = location.pathname + new URLSearchParams(location.search);
+  const url =
+    location.pathname +
+    (location.search ? "?" : "") +
+    new URLSearchParams(location.search).toString();
 
   return (
     <div className="article">
@@ -26,7 +29,7 @@ function Article({ article }) {
               <li className="regulation" id={regulation.id}>
                 <span className="anchor" id={regulation.id} />
                 <div>
-                  <a className="anchor" href={"${url}#" + regulation.id}>
+                  <a className="anchor" href={`${url}#` + regulation.id}>
                     {regulation.id}
                   </a>
                   {") "}

@@ -9,13 +9,14 @@ export const Header: React.FC = () => {
   const { version, releases } = useRegulations();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
+  const hash = location.hash;
 
   const search = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(history);
+
     const newQueryParams = new URLSearchParams(queryParams);
     newQueryParams.set("q", query);
-    navigate(`/search?${newQueryParams.toString()}`);
+    navigate(`/search?${newQueryParams.toString()}${hash}`);
   };
 
   return (
@@ -41,7 +42,11 @@ export const Header: React.FC = () => {
 
             return (
               <Dropdown.Item key={release.id} value={release.tag_name}>
-                <Link to={`${location.pathname}?${newQueryParams.toString()}`}>
+                <Link
+                  to={`${
+                    location.pathname
+                  }?${newQueryParams.toString()}${hash}`}
+                >
                   <p className="is-small">{name}</p>
                 </Link>
               </Dropdown.Item>

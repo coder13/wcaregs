@@ -2,8 +2,11 @@ import { FormEvent, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Dropdown, Icon } from "react-bulma-components";
 import { useRegulations } from "../providers/RegulationsProvider/RegulationsContext";
+import { useScrollToLocation } from "../hooks/useScrollToLocation";
 
 export const Header: React.FC = () => {
+  useScrollToLocation();
+
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const { version, releases } = useRegulations();

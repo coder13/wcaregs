@@ -1,4 +1,5 @@
 import { useLocation } from "react-router-dom";
+import classNames from "classnames";
 
 function Article({ article }) {
   const location = useLocation();
@@ -6,6 +7,7 @@ function Article({ article }) {
     location.pathname +
     (location.search ? "?" : "") +
     new URLSearchParams(location.search).toString();
+  const hash = location.hash.replace("#", "");
 
   return (
     <div className="article">
@@ -26,10 +28,15 @@ function Article({ article }) {
             className={"indent-" + regulation.level}
           >
             {regulation.description && (
-              <li className="regulation" id={regulation.id}>
+              <li
+                className={classNames("regulation", {
+                  highlight: hash === regulation.id,
+                })}
+                id={regulation.id}
+              >
                 <span className="anchor" id={regulation.id} />
                 <div>
-                  <a className="anchor" href={`${url}#` + regulation.id}>
+                  <a className="anchor" href={`#` + regulation.id}>
                     {regulation.id}
                   </a>
                   {") "}
@@ -56,7 +63,9 @@ function Article({ article }) {
             {regulation.guidelines.map((guideline) => (
               <li
                 key={regulation.id + guideline.pluses}
-                className="guideline"
+                className={classNames("guideline", {
+                  highlight: hash === regulation.id + guideline.pluses,
+                })}
                 id={regulation.id + guideline.pluses}
               >
                 <span

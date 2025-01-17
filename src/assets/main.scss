@@ -117,13 +117,13 @@ ul {
   margin-left: 8em;
 }
 
-:target {
-  background-color: yellow;
-}
+// :target {
+//   background-color: yellow;
+// }
 
-:target > .tag {
-  background-color: rgb(240, 240, 0);
-}
+// :target > .tag {
+//   background-color: rgb(240, 240, 0);
+// }
 
 .highlight {
   background: yellow;

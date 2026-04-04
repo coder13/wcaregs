@@ -12,6 +12,7 @@ export const RegulationsProvider = ({ children }) => {
   const [releases, setReleases] = useState<ReleasesData>([]);
   const [regulationsAndGuidelinesMap, setRegulationsAndGuidelinesMap] =
     useState<Map<string, RegsAndGuidelines>>(new Map());
+  const [failedRef, setFailedRef] = useState<string | null>(null);
 
   const { search } = useLocation();
   const searchParams = new URLSearchParams(search);
@@ -39,15 +40,29 @@ export const RegulationsProvider = ({ children }) => {
   const getVersion = useCallback(async (versionTag: string) => {
     setRef(versionTag);
     try {
-      const version = await fetchVersion(versionTag);
+      const data = await fetchVersion(versionTag);
       setRegulationsAndGuidelinesMap(
-        (prev) => new Map(prev.set(versionTag, version))
+        (prev) => new Map(prev.set(versionTag, data))
       );
     } catch (error) {
-      // Leave the map entry absent so the UI falls back to emptyRegulationsAndGuidelines
       console.error(`Failed to load version "${versionTag}":`, error);
+      setFailedRef(versionTag);
     }
   }, []);
+
+  // When a version fails and no explicit ?version= was requested, fall back to
+  // the next release in the list (skipping PDF-only or otherwise unavailable tags).
+  useEffect(() => {
+    if (!failedRef || version) {
+      return;
+    }
+    const currentIndex = releases.findIndex((r) => r.tag_name === failedRef);
+    if (currentIndex >= 0 && currentIndex < releases.length - 1) {
+      const nextTag = releases[currentIndex + 1].tag_name;
+      setFailedRef(null);
+      setRef(nextTag);
+    }
+  }, [failedRef, releases, version]);
 
   useEffect(() => {
     if (ref) {

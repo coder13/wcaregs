@@ -38,10 +38,15 @@ export const RegulationsProvider = ({ children }) => {
 
   const getVersion = useCallback(async (versionTag: string) => {
     setRef(versionTag);
-    const version = await fetchVersion(versionTag);
-    setRegulationsAndGuidelinesMap(
-      (prev) => new Map(prev.set(versionTag, version))
-    );
+    try {
+      const version = await fetchVersion(versionTag);
+      setRegulationsAndGuidelinesMap(
+        (prev) => new Map(prev.set(versionTag, version))
+      );
+    } catch (error) {
+      // Leave the map entry absent so the UI falls back to emptyRegulationsAndGuidelines
+      console.error(`Failed to load version "${versionTag}":`, error);
+    }
   }, []);
 
   useEffect(() => {

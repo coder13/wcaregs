@@ -20,5 +20,12 @@ export const fetchReleases = async (): Promise<ReleasesData> => {
 
 export const fetchVersion = async (version: string) => {
   const res = await fetch(`/.netlify/functions/version?tag=${version}`);
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(
+      (body as { message?: string }).message ??
+        `Failed to fetch version "${version}" (${res.status})`
+    );
+  }
   return (await res.json()) as RegsAndGuidelines;
 };

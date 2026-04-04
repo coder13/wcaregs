@@ -1,3 +1,4 @@
+import { RequestError } from "@octokit/request-error";
 import { fetchRegulations, fetchGuidelines } from "./api.mts";
 import { buildRegsAndGuidelines } from "./parser.mts";
 
@@ -32,6 +33,18 @@ export default async (request: Request) => {
 
     return response;
   } catch (error) {
+    if (error instanceof RequestError && error.status === 404) {
+      return new Response(
+        JSON.stringify({
+          error: "Not Found",
+          message: `Tag "${tag}" does not correspond to a git ref containing regulation markdown files. This release may only include a PDF asset.`,
+        }),
+        {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
     return new Response((error as Error).toString(), {
       status: 500,
     });
